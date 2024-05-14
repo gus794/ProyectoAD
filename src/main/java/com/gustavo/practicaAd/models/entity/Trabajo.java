@@ -28,7 +28,7 @@ public class Trabajo {
 
     @Column(name = "fec_ini", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
+    private Date fechaInicio = new Date();
 
     @Column(name = "fec_fin")
     @Temporal(TemporalType.DATE)

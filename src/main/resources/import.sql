@@ -1,0 +1,8 @@
+INSERT INTO trabajadores (id_trab, dni, nombre, apellidos, especialidad, contraseña, email) VALUES (1, '12345678A', 'Juan', 'Pérez', 'Programador', 'contraseña123', 'juan@example.com');
+INSERT INTO trabajadores (id_trab, dni, nombre, apellidos, especialidad, contraseña, email) VALUES (2, '23456789B', 'Ana', 'López', 'Analista de datos', 'clave567', 'ana@example.com');
+INSERT INTO trabajadores (id_trab, dni, nombre, apellidos, especialidad, contraseña, email) VALUES (3, '34567890C', 'Pedro', 'Martínez', 'Ingeniero de software', 'password789', 'pedro@example.com');
+INSERT INTO trabajadores (id_trab, dni, nombre, apellidos, especialidad, contraseña, email) VALUES (4, '45678901D', 'Laura', 'Ruiz', 'Diseñadora UX/UI', '123abc', 'laura@example.com');
+INSERT INTO trabajos (cod_trab, categoria, descripcion, fec_ini, fec_fin, tiempo, prioridad, id_trab) VALUES ('T001', 'Desarrollo web', 'Desarrollar un sitio web para cliente X', '2024-05-10', '2024-06-10', 30.5, 1, 1);
+INSERT INTO trabajos (cod_trab, categoria, descripcion, fec_ini, fec_fin, tiempo, prioridad, id_trab) VALUES ('T002', 'Diseño gráfico', 'Diseñar el logo de la empresa Y', '2024-05-15', '2024-06-01', 15.0, 2, 2);
+INSERT INTO trabajos (cod_trab, categoria, descripcion, fec_ini, fec_fin, tiempo, prioridad, id_trab) VALUES ('T003', 'Análisis de datos', 'Realizar análisis estadístico para informe trimestral', '2024-05-20', '2024-06-20', 25.0, 3, 3);
+INSERT INTO trabajos (cod_trab, categoria, descripcion, fec_ini, fec_fin, tiempo, prioridad, id_trab) VALUES ('T004', 'Diseño de interfaz', 'Crear interfaz de usuario para aplicación móvil', '2024-05-25', '2024-06-05', 18.0, 1, 4);
