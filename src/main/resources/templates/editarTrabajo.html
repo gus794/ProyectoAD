@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo}"></title>
+</head>
+
+<body>
+    <h1 th:text="${titulo}"></h1>
+
+    <form th:action="@{/views/updateTrabajo}" th:object="${trabajo}" method="post">
+		<input type="hidden" th:field="*{codTrabajo}" />
+        <div class="errorblock" th:if="${#fields.hasErrors('*')}">
+            <ul>
+                <li th:each="err: ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+            </ul>
+        </div>
+
+        <fieldset>
+            <legend>Datos del trabajo</legend>
+            <table>
+				<tr>
+                    <td><label th:text="${categoria}">Categoria: </label></td>
+                    <td><select th:field="*{categoria}" th:value="${trabajo.categoria}" required>
+            				<option value="limpieza">Limpieza</option>
+            				<option value="mantenimiento">Mantenimiento</option>
+            				<option value="atencion">Atención al cliente</option>
+        				</select>
+        			</td>
+                </tr>
+                <tr>
+                    <td><label th:text="${descripcion}">Descripción: </label></td>
+                    <td><textarea th:field="*{descripcion}" th:value="${trabajo.descripcion}" required></textarea></td>
+                </tr>
+
+                <tr>
+                    <td><label th:text="${prioridad}">Prioridad: </label></td>
+                    <td><select th:field="*{prioridad}" th:value="${trabajo.prioridad}" required>
+            				<option value="1">1</option>
+            				<option value="2">2</option>
+            				<option value="3">3</option>
+        				</select>
+        			</td>
+                </tr>
+                
+                <tr>
+                    <td><label th:text="${tiempo}">Tiempo: </label></td>
+                    <td><input type="number" th:field="*{tiempo}" th:value="${trabajo.tiempo}" required /><label> horas</label></td>
+                </tr>
+
+                <tr>
+                    <td><label th:text="${trabajador}">Trabajador: </label></td>
+                    <td><select th:field="*{trabajador}" th:value="${trabajo.trabajador}" required>
+							<option th:each="trabajador : ${trabajadores}" th:value="${trabajador.idTrabajador}" th:text="${trabajador.nombre} + ' ' + ${trabajador.apellidos}"></option>
+        				</select>
+        			</td>
+                </tr>
+
+                <tr>
+                    <td><button type="submit">Registrar</button></td>
+                </tr>    
+
+            </table>
+        </fieldset>
+    </form>
+    <p><a th:href="@{/views/}">Volver</a></p>
+</body>
+</html>

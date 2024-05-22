@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 public class Trabajador {
     @Id
     @Column(name = "id_trab")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTrabajador;
 
     @Column(name = "dni", unique = true, nullable = false)

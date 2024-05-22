@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo}"></title>
+</head>
+
+<body>
+    <h1 th:text="${titulo}"></h1>
+
+    <form th:action="@{/views/updateTrabajador}" th:object="${trabajador}" method="post">
+		<input type="hidden" th:field="*{idTrabajador}" />
+        <div class="errorblock" th:if="${#fields.hasErrors('*')}">
+            <ul>
+                <li th:each="err: ${#fields.errors(**')}" th:text="${err}">Input is incorrect</li>
+            </ul>
+        </div>
+
+        <fieldset>
+            <legend>Datos del trabajador</legend>
+            <table>
+                <tr>
+                    <td><label th:text="${dni}">DNI: </label></td>
+                    <td><input type="text" th:field="*{dni}" th:value="${trabajador.dni}" minlength="9" maxlength="9" required /></td>
+                </tr>
+                <tr>
+                    <td><label th:text="${nombre}">Nombre: </label></td>
+                    <td><input type="text" th:field="*{nombre}" th:value="${trabajador.nombre}" minlength="4" maxlength="12" required /></td>
+                </tr>
+                
+                <tr>
+                    <td><label th:text="${apellidos}">Apellidos: </label></td>
+                    <td><input type="text" th:field="*{apellidos}" th:value="${trabajador.apellidos}" required /></td>
+                </tr>
+                
+                <tr>
+                    <td><label th:text="${contraseña}">Contraseña: </label></td>
+                    <td><input type="password" th:field="*{contraseña}" th:value="${trabajador.contraseña}" required /></td>
+                </tr>
+                
+                <tr>
+                    <td><label th:text="${especialidad}">Especialidad: </label></td>
+                    <td><select th:field="*{especialidad}" th:value="${trabajador.especialidad}" required>
+            				<option value="limpieza">Limpieza</option>
+            				<option value="mantenimiento">Mantenimiento</option>
+            				<option value="atencion">Atención al cliente</option>
+        				</select>
+        			</td>
+                </tr>
+
+                <tr>
+                    <td><label th:text="${email}">Correo: </label></td>
+                    <td><input type="email" th:field="*{email}" th:value="${trabajador.email}" required /></td>
+                </tr>
+
+                <tr>
+                    <td><button type="submit">Actualizar</button></td>
+                </tr>    
+            </table>
+        </fieldset>
+    </form>
+    <p><a th:href="@{/views/}">Volver</a></p>
+</body>
+</html>
