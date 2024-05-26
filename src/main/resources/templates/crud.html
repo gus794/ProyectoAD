@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Trabajos y Trabajadores</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Lista de Trabajos</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Cod Trabajo</th>
+                    <th>Categoria</th>
+                    <th>Descripcion</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Tiempo</th>
+                    <th>Prioridad</th>
+                    <th>Trabajador</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="trabajo : ${trabajos}">
+                    <td th:text="${trabajo.codTrabajo}"></td>
+                    <td th:text="${trabajo.categoria}"></td>
+                    <td th:text="${trabajo.descripcion}"></td>
+                    <td th:text="${trabajo.fechaInicio}"></td>
+                    <td th:text="${trabajo.fechaFin}"></td>
+                    <td th:text="${trabajo.tiempo}"></td>
+                    <td th:text="${trabajo.prioridad}"></td>
+                    <td th:text="${trabajo.trabajador?.nombre}"></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" th:attr="onclick='editTrabajo(' + ${trabajo.codTrabajo} + ')'">Editar</button>
+                        <form th:action="@{/views/trabajos/{id}/delete(id=${trabajo.codTrabajo})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+		<div class="text-center">
+           <a class="btn btn-info mt-3" th:href="@{/views/crearTrabajo}">Volver</a>
+        </div>
+        <h1 class="text-center">Lista de Trabajadores</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>DNI</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Especialidad</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="trabajador : ${trabajadores}">
+                    <td th:text="${trabajador.idTrabajador}"></td>
+                    <td th:text="${trabajador.dni}"></td>
+                    <td th:text="${trabajador.nombre}"></td>
+                    <td th:text="${trabajador.apellidos}"></td>
+                    <td th:text="${trabajador.especialidad}"></td>
+                    <td th:text="${trabajador.email}"></td>
+                    <td>
+			           <a class="btn btn-info mt-3" th:href="@{/views/editarTrabajador/{id}(id=${trabajador.idTrabajador})}">Editar</a>
+                        <form th:action="@{/views/trabajadores/{id}/delete(id=${trabajador.idTrabajador})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+           <a class="btn btn-info mt-3" th:href="@{/views/crearTrabajador}">Volver</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

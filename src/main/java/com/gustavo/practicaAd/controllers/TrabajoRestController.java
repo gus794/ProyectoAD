@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,9 +55,9 @@ public class TrabajoRestController {
 		return trabajoService.findFinishedTasks();
 	}
 	
-	@GetMapping("/trabajos/orderedByPriority")
-	public List<Trabajo> findTasksOrderedByPriority(@RequestBody Trabajador trabajo) {
-		return trabajoService.findTasksOrderedByPriority(trabajo);
+	@GetMapping("/trabajos/orderedByPriority/{idTrabajador}")
+	public List<Trabajo> findTasksOrderedByPriority(@PathVariable String idTrabajador) {
+		return trabajoService.findTasksOrderedByPriority(idTrabajador);
 	}
 	
 	@GetMapping("/trabajos/ByPriority/{prioridad}")
@@ -82,19 +83,35 @@ public class TrabajoRestController {
 		return this.trabajoService.findById(id);
 	}
 	
-	@PostMapping("/trabajos")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Trabajo create (@RequestBody Trabajo trabajo) {
-		this.trabajoService.save(trabajo);
-		return trabajo;
-	}
-	
-	@PostMapping("/trabajos/{id}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Trabajo create (@RequestBody Trabajo trabajo, @PathVariable Long id) {
-		this.trabajoService.saveWithWorker(trabajo, id);
-		return trabajo;
-	}
+	@PostMapping(value = "/trabajos", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Trabajo create (@RequestBody Trabajo trabajo) {
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    int mayor = 0;
+	    for(int i=0; i<trabajos.size();i++) {
+	    	if(i==0) {
+	    		mayor = Integer.parseInt(trabajos.get(i).getCodTrabajo().substring(1));
+	    	}
+	    	else{
+	    		if(mayor < Integer.parseInt(trabajos.get(i).getCodTrabajo().substring(1))) {
+	    			mayor = Integer.parseInt(trabajos.get(i).getCodTrabajo().substring(1));
+	    		}
+	    	}
+	    }
+	    mayor = mayor+1;
+	    String nuevoCodTrabajo = "T"+mayor;
+	    System.out.println(nuevoCodTrabajo);
+	    trabajo.setCodTrabajo(nuevoCodTrabajo);
+        this.trabajoService.save(trabajo);
+        return trabajo;
+    }
+
+    @PostMapping(value = "/trabajos/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Trabajo create (@RequestBody Trabajo trabajo, @PathVariable Long id) {
+        this.trabajoService.saveWithWorker(trabajo, id);
+        return trabajo;
+    }
 	
 	@PutMapping("/trabajos/{id}/{idWorker}")
 	@ResponseStatus(HttpStatus.CREATED)

@@ -88,9 +88,9 @@ import com.gustavo.practicaAd.models.dao.ITrabajoDAO;
 		}
 		
 		@Override
-	    public List<Trabajo> findTasksOrderedByPriority(Trabajador trabajador) {
-			return entityManager.createQuery("SELECT t FROM Trabajo t WHERE t.trabajador = :trabajador AND fechaFin IS NULL ORDER BY t.prioridad", Trabajo.class)
-		            .setParameter("trabajador", trabajador)
+	    public List<Trabajo> findTasksOrderedByPriority(String idTrabajador) {
+			return entityManager.createQuery("SELECT t FROM Trabajo t WHERE t.trabajador = (SELECT tr FROM Trabajador tr WHERE tr.idTrabajador = :idTrabajador) AND fechaFin IS NULL ORDER BY t.prioridad", Trabajo.class)
+		            .setParameter("idTrabajador", idTrabajador)
 		            .getResultList();
 		}
 		
@@ -129,6 +129,15 @@ import com.gustavo.practicaAd.models.dao.ITrabajoDAO;
 					,Trabajo.class)
 					.setParameter("idTrabajador", idTrabajador)
 					.setParameter("contraseña", contraseña)
+					.getResultList();
+		}
+
+		@Override
+		public List<Trabajo> findByTrabajador(Trabajador trabajador) {
+			return entityManager.createQuery("SELECT t FROM Trabajo t WHERE t.trabajador = ("
+					+ "SELECT tr FROM Trabajador tr WHERE tr.idTrabajador = :idTrabajador)"
+					,Trabajo.class)
+					.setParameter("idTrabajador", trabajador.getIdTrabajador())
 					.getResultList();
 		}
 	}

@@ -4,65 +4,71 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${titulo}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 th:text="${titulo}"></h1>
+    <div class="container mt-5">
+        <h1 class="text-center" th:text="${titulo}"></h1>
+        
+        <form th:action="@{/views/createTrabajo}" th:object="${trabajo}" method="post" class="mt-4">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="err: ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                </ul>
+            </div>
 
-    <form th:action="@{/views/createTrabajo}" th:object="${trabajo}" method="post">
-        <div class="errorblock" th:if="${#fields.hasErrors('*')}">
-            <ul>
-                <li th:each="err: ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
-            </ul>
+            <fieldset class="border p-4 rounded">
+                <legend class="w-auto px-2">Datos del trabajo</legend>
+                <div class="form-group">
+                    <label th:text="${categoria}">Categoria: </label>
+                    <select th:field="*{categoria}" class="form-control" required>
+                        <option value="limpieza">Limpieza</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                        <option value="atencion">Atención al cliente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label th:text="${descripcion}">Descripción: </label>
+                    <textarea th:field="*{descripcion}" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label th:text="${prioridad}">Prioridad: </label>
+                    <select th:field="*{prioridad}" class="form-control" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label th:text="${tiempo}">Tiempo: </label>
+                    <div class="input-group">
+                        <input type="number" th:field="*{tiempo}" class="form-control" required />
+                        <div class="input-group-append">
+                            <span class="input-group-text">horas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label th:text="${trabajador}">Trabajador: </label>
+                    <select th:field="*{trabajador}" class="form-control" required>
+                        <option th:each="trabajador : ${trabajadores}" th:value="${trabajador.idTrabajador}" th:text="${trabajador.nombre} + ' ' + ${trabajador.apellidos}"></option>
+                    </select>
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+            </fieldset>
+        </form>
+        
+        <div class="text-center mt-3">
+            <a class="btn btn-info" th:href="@{/views/trabajos}">Volver</a>
         </div>
+    </div>
 
-        <fieldset>
-            <legend>Datos del trabajo</legend>
-            <table>
-				<tr>
-                    <td><label th:text="${categoria}">Categoria: </label></td>
-                    <td><select th:field="*{categoria}" required>
-            				<option value="limpieza">Limpieza</option>
-            				<option value="mantenimiento">Mantenimiento</option>
-            				<option value="atencion">Atención al cliente</option>
-        				</select>
-        			</td>
-                </tr>
-                <tr>
-                    <td><label th:text="${descripcion}">Descripción: </label></td>
-                    <td><textarea th:field="*{descripcion}" required></textarea></td>
-                </tr>
-
-                <tr>
-                    <td><label th:text="${prioridad}">Prioridad: </label></td>
-                    <td><select th:field="*{prioridad}" required>
-            				<option value="1">1</option>
-            				<option value="2">2</option>
-            				<option value="3">3</option>
-        				</select>
-        			</td>
-                </tr>
-                
-                <tr>
-                    <td><label th:text="${tiempo}">Tiempo: </label></td>
-                    <td><input type="number" th:field="*{tiempo}" required /><label> horas</label></td>
-                </tr>
-
-                <tr>
-                    <td><label th:text="${trabajador}">Trabajador: </label></td>
-                    <td><select th:field="*{trabajador}" required>
-							<option th:each="trabajador : ${trabajadores}" th:value="${trabajador.idTrabajador}" th:text="${trabajador.nombre} + ' ' + ${trabajador.apellidos}"></option>
-        				</select>
-        			</td>
-                </tr>
-
-                <tr>
-                    <td><button type="submit">Registrar</button></td>
-                </tr>    
-
-            </table>
-        </fieldset>
-    </form>
-    <p><a th:href="@{/views/}">Volver</a></p>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

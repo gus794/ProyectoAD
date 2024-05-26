@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4" th:text="${title}"></h1>
+
+        <div th:if="${not trabajadores.isEmpty()}">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Especialidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="trabajador : ${trabajadores}">
+                        <td th:text="${trabajador.idTrabajador}"></td>
+                        <td th:text="${trabajador.nombre}"></td>
+                        <td th:text="${trabajador.apellidos}"></td>
+                        <td th:text="${trabajador.dni}"></td>
+                        <td th:text="${trabajador.especialidad}"></td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" th:href="@{/views/trabajos/listar/{id}/finalizadas(id=${trabajador.idTrabajador})}">Listar tareas finalizadas</a>
+                            <a class="btn btn-secondary btn-sm" th:href="@{/views/trabajos/listar/{id}/pendientes(id=${trabajador.idTrabajador})}">Listar tareas pendientes</a>
+                            <a class="btn btn-dark btn-sm" th:href="@{/views/trabajadores/{id}(id=${trabajador.idTrabajador})}">Área personal</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><a class="btn btn-info" th:href="@{/views}">Volver</a></p>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

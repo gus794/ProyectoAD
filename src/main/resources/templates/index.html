@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xml:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+
+	<ul>
+		<li><a th:href="@{/views/trabajos/listar}">Listar</a></li>
+		<li><a th:href="@{/views/trabajos/anyadir}">Anyadir</a></li>
+	</ul>
+	
+	<p><a th:href="@{/views}">Volver</a></p>
+</body>
+</html>	

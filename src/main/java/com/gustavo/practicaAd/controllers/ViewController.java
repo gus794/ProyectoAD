@@ -4,37 +4,131 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.gustavo.practicaAd.models.entity.Trabajador;
 import com.gustavo.practicaAd.models.entity.Trabajo;
-import com.gustavo.practicaAd.models.services.TrabajadorServiceImpl;
-import com.gustavo.practicaAd.models.services.TrabajoServiceImpl;
+import com.gustavo.practicaAd.models.services.ITrabajadorService;
+import com.gustavo.practicaAd.models.services.ITrabajoService;
 
-import jakarta.validation.Valid;
+
 
 @Controller
 @RequestMapping("views")
 public class ViewController {
+	@Autowired
+	private ITrabajoService trabajoService;
 	
 	@Autowired
-	TrabajadorServiceImpl trabajadorService = new TrabajadorServiceImpl();
-	@Autowired
-	TrabajoServiceImpl trabajoService = new TrabajoServiceImpl();
-	
-	@GetMapping("/")
+	private ITrabajadorService trabajadorService;
+
+	@GetMapping("")
 	public String index(Model model) {
-		model.addAttribute("titulo", "Práctica 4");
+		model.addAttribute("title", "Spring Backend");
 		return "index";
 	}
 	
+	@GetMapping("/trabajadores/{idTrabajador}")
+    public String personalArea(@PathVariable Long idTrabajador, Model model) {
+        Trabajador trabajador = trabajadorService.findById(idTrabajador);
+        model.addAttribute("trabajador", trabajador);
+        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
+        model.addAttribute("trabajosPendientes", trabajoService.getPendingTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
+        return "personalArea";
+    }
+	
+	@GetMapping("/trabajadores/{idTrabajador}/finalizadas")
+    public String listarFinalizadasEnArea(@PathVariable Long idTrabajador, Model model) {
+        Trabajador trabajador = trabajadorService.findById(idTrabajador);
+        model.addAttribute("trabajador", trabajador);
+        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
+        model.addAttribute("trabajosFinalizadas", trabajoService.getFinishedTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
+        return "personalArea";
+    }
+	
+	@GetMapping("/trabajos/listar")
+	public String listar(Model model) {
+		model.addAttribute("title", "Lista de trabajos");
+		model.addAttribute("trabajadores", trabajadorService.findAll());
+		return "listarTrabajos";
+	}
+	
+	@GetMapping("/trabajos/{id}/finish")
+    public String cerrarTarea(@PathVariable String id, @RequestParam("tiempo") Double tiempo, Model model) {
+        Trabajo trabajo = trabajoService.findById(id);
+        if (trabajo != null) {
+            trabajo.setTiempo(tiempo);
+            trabajo.setFechaFin(new Date());
+            trabajoService.save(trabajo);
+        }
+        Trabajador trabajador = trabajo.getTrabajador();
+        model.addAttribute("trabajador", trabajador);
+        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
+        model.addAttribute("trabajosFinalizados", trabajoService.getFinishedTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
+        return "personalArea";
+    }
+	
+	@GetMapping("/trabajos")
+    public String listarTrabajosYTrabajadores(Model model) {
+        List<Trabajo> trabajos = trabajoService.findAll();
+        List<Trabajador> trabajadores = trabajadorService.findAll();
+        model.addAttribute("trabajos", trabajos);
+        model.addAttribute("trabajadores", trabajadores);
+        return "crud";
+    }
+	
+	@PostMapping("/trabajos/{id}/delete")
+	public String deleteTrabajo(@PathVariable String id, Model model) {
+	    Trabajo currentTrabajo = this.trabajoService.findById(id);
+	    if (currentTrabajo != null) {
+	        this.trabajoService.delete(currentTrabajo);
+	        List<Trabajo> trabajos = trabajoService.findAll();
+	        List<Trabajador> trabajadores = trabajadorService.findAll();
+	    } else {
+	        model.addAttribute("error", true);
+	        model.addAttribute("errorMessage", "Error al borrar trabajo");
+	    }
+	    
+        List<Trabajo> trabajos = trabajoService.findAll();
+        List<Trabajador> trabajadores = trabajadorService.findAll();
+        model.addAttribute("trabajos", trabajos);
+        model.addAttribute("trabajadores", trabajadores);
+        return "crud";
+	}
+	
+	@PostMapping("/trabajadores/{id}/delete")
+	public String deleteTrabajador(@PathVariable Long id, Model model) {
+	    Trabajador trabajador = trabajadorService.findById(id);
+	    List<Trabajo> trabajosAsignados = trabajoService.findByTrabajador(trabajador);
+
+	    if (trabajosAsignados.isEmpty()) {
+	        trabajadorService.delete(trabajador);
+	        model.addAttribute("successMessage", "Trabajador eliminado correctamente.");
+	    } else {
+	        model.addAttribute("error", true);
+	        model.addAttribute("errorMessage", "No se puede eliminar el trabajador porque tiene trabajos asignados.");
+	    }
+
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    model.addAttribute("trabajos", trabajos);
+	    model.addAttribute("trabajadores", trabajadores);
+
+	    return "crud";
+	}
+
 	@GetMapping("/crearTrabajador")
 	public String addTrabajador(Model model) {
 		model.addAttribute("titulo","Añadir trabajador");
@@ -91,7 +185,7 @@ public class ViewController {
 
 	
 	@RequestMapping("/createTrabajador")
-	public ModelAndView createTrabajador(@Valid Trabajador trabajador, BindingResult result, Model mod) {
+	public String createTrabajador(@Validated Trabajador trabajador, BindingResult result, Model mod) {
 	    ModelAndView model = new ModelAndView();
 	    boolean exists = false;
 
@@ -105,8 +199,6 @@ public class ViewController {
 	            }
 	        }
 
-	        model.setViewName("ready");
-
 	        if (!exists) {
 	            mod.addAttribute("resultado", "Trabajador creado");
 	            trabajadorService.save(trabajador);
@@ -117,18 +209,16 @@ public class ViewController {
 	        model.setViewName("crearTrabajador");
 	    }
 
-	    mod.addAttribute("dni","DNI:");
-		mod.addAttribute("nombre","Nombre:");
-		mod.addAttribute("apellidos","Apellidos:");
-		mod.addAttribute("especialidad","Especialidad:");
-		mod.addAttribute("contraseña","Contraseña:");
-		mod.addAttribute("email","Email:");
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    mod.addAttribute("trabajos", trabajos);
+	    mod.addAttribute("trabajadores", trabajadores);
 
-	    return model;
+	    return "crud";
 	}
 	
 	@RequestMapping("/createTrabajo")
-	public ModelAndView createTrabajo(@Valid Trabajo trabajo, BindingResult result, Model mod) {
+	public String createTrabajo(@Validated Trabajo trabajo, BindingResult result, Model mod) {
 	    ModelAndView model = new ModelAndView();
 	    boolean exists = false;
 
@@ -158,8 +248,6 @@ public class ViewController {
 	            }
 	        }
 
-	        model.setViewName("ready");
-
 	        if (!exists) {
 	            mod.addAttribute("resultado", "Trabajo creado");
 	            trabajoService.save(trabajo);
@@ -170,18 +258,16 @@ public class ViewController {
 	        model.setViewName("crearTrabajo");
 	    }
 
-	    mod.addAttribute("categoria","Categoria:");
-		mod.addAttribute("descripcion","Descripcion:");
-		mod.addAttribute("prioridad","Prioridad:");
-		mod.addAttribute("tiempo","Tiempo:");
-		List<Trabajador> trabajadores = trabajadorService.findAll();
+	    trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    mod.addAttribute("trabajos", trabajos);
 	    mod.addAttribute("trabajadores", trabajadores);
 
-	    return model;
+	    return "crud";
 	}
 	
 	@PostMapping("/updateTrabajador")
-	public ModelAndView updateTrabajador(@Valid Trabajador trabajador, BindingResult result, Model mod) {
+	public String updateTrabajador(@Validated Trabajador trabajador, BindingResult result, Model mod) {
 	    ModelAndView model = new ModelAndView();
 
 	    model.addObject("trabajador", trabajador);
@@ -199,7 +285,6 @@ public class ViewController {
 
 	            trabajadorService.save(existingTrabajador);
 	            
-	            model.setViewName("ready");
 	            mod.addAttribute("resultado", "Trabajador actualizado");
 	        }
 	    }
@@ -211,11 +296,16 @@ public class ViewController {
 	    mod.addAttribute("contraseña","Contraseña:");
 	    mod.addAttribute("email","Email:");
 
-	    return model;
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    mod.addAttribute("trabajos", trabajos);
+	    mod.addAttribute("trabajadores", trabajadores);
+
+	    return "crud";
 	}
 	
 	@PostMapping("/updateTrabajo")
-	public ModelAndView updateTrabajo(@Valid Trabajo trabajo, BindingResult result, Model mod) {
+	public ModelAndView updateTrabajo(@Validated Trabajo trabajo, BindingResult result, Model mod) {
 	    ModelAndView model = new ModelAndView();
 
 	    model.addObject("trabajo", trabajo);

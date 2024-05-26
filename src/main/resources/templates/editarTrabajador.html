@@ -4,62 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${titulo}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 th:text="${titulo}"></h1>
+    <div class="container mt-5">
+        <h1 class="text-center" th:text="${titulo}"></h1>
+        
+        <form th:action="@{/views/updateTrabajador}" th:object="${trabajador}" method="post" class="mt-4">
+            <input type="hidden" th:field="*{idTrabajador}" />
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="err: ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                </ul>
+            </div>
 
-    <form th:action="@{/views/updateTrabajador}" th:object="${trabajador}" method="post">
-		<input type="hidden" th:field="*{idTrabajador}" />
-        <div class="errorblock" th:if="${#fields.hasErrors('*')}">
-            <ul>
-                <li th:each="err: ${#fields.errors(**')}" th:text="${err}">Input is incorrect</li>
-            </ul>
+            <fieldset class="border p-4 rounded">
+                <legend class="w-auto px-2">Datos del trabajador</legend>
+                <div class="form-group">
+                    <label th:text="${dni}">DNI: </label>
+                    <input type="text" th:field="*{dni}" th:value="${trabajador.dni}" class="form-control" minlength="9" maxlength="9" required />
+                </div>
+                <div class="form-group">
+                    <label th:text="${nombre}">Nombre: </label>
+                    <input type="text" th:field="*{nombre}" th:value="${trabajador.nombre}" class="form-control" minlength="4" maxlength="12" required />
+                </div>
+                <div class="form-group">
+                    <label th:text="${apellidos}">Apellidos: </label>
+                    <input type="text" th:field="*{apellidos}" th:value="${trabajador.apellidos}" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label th:text="${contraseña}">Contraseña: </label>
+                    <input type="password" th:field="*{contraseña}" th:value="${trabajador.contraseña}" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label th:text="${especialidad}">Especialidad: </label>
+                    <select th:field="*{especialidad}" th:value="${trabajador.especialidad}" class="form-control" required>
+                        <option value="limpieza">Limpieza</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                        <option value="atencion">Atención al cliente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label th:text="${email}">Correo: </label>
+                    <input type="email" th:field="*{email}" th:value="${trabajador.email}" class="form-control" required />
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </fieldset>
+        </form>
+        
+        <div class="text-center mt-3">
+            <a class="btn btn-info" th:href="@{/views/trabajos}">Volver</a>
         </div>
+    </div>
 
-        <fieldset>
-            <legend>Datos del trabajador</legend>
-            <table>
-                <tr>
-                    <td><label th:text="${dni}">DNI: </label></td>
-                    <td><input type="text" th:field="*{dni}" th:value="${trabajador.dni}" minlength="9" maxlength="9" required /></td>
-                </tr>
-                <tr>
-                    <td><label th:text="${nombre}">Nombre: </label></td>
-                    <td><input type="text" th:field="*{nombre}" th:value="${trabajador.nombre}" minlength="4" maxlength="12" required /></td>
-                </tr>
-                
-                <tr>
-                    <td><label th:text="${apellidos}">Apellidos: </label></td>
-                    <td><input type="text" th:field="*{apellidos}" th:value="${trabajador.apellidos}" required /></td>
-                </tr>
-                
-                <tr>
-                    <td><label th:text="${contraseña}">Contraseña: </label></td>
-                    <td><input type="password" th:field="*{contraseña}" th:value="${trabajador.contraseña}" required /></td>
-                </tr>
-                
-                <tr>
-                    <td><label th:text="${especialidad}">Especialidad: </label></td>
-                    <td><select th:field="*{especialidad}" th:value="${trabajador.especialidad}" required>
-            				<option value="limpieza">Limpieza</option>
-            				<option value="mantenimiento">Mantenimiento</option>
-            				<option value="atencion">Atención al cliente</option>
-        				</select>
-        			</td>
-                </tr>
-
-                <tr>
-                    <td><label th:text="${email}">Correo: </label></td>
-                    <td><input type="email" th:field="*{email}" th:value="${trabajador.email}" required /></td>
-                </tr>
-
-                <tr>
-                    <td><button type="submit">Actualizar</button></td>
-                </tr>    
-            </table>
-        </fieldset>
-    </form>
-    <p><a th:href="@{/views/}">Volver</a></p>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

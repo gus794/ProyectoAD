@@ -24,7 +24,7 @@ public interface ITrabajoService {
     
     public List<Trabajo> findFinishedTasks();
     
-    public List<Trabajo> findTasksOrderedByPriority(Trabajador t);
+    public List<Trabajo> findTasksOrderedByPriority(String idTrabajador);
     
     public List<Trabajo> findTasksByPriority(Trabajador trabajador, String prioridad);
     
@@ -33,5 +33,6 @@ public interface ITrabajoService {
     public List<Trabajo> getPendingTasks(String idTrabajador, String contraseña);
     
     public List<Trabajo> getFinishedTasks(String idTrabajador, String contraseña);
+    public List<Trabajo> findByTrabajador(Trabajador trabajador);
     
 }
