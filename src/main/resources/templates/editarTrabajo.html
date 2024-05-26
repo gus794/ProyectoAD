@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center" th:text="${titulo}"></h1>
+
+        <form th:action="@{/views/updateTrabajo}" th:object="${trabajo}" method="post" class="mt-4">
+            <input type="hidden" th:field="*{codTrabajo}" />
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <ul>
+                    <li th:each="err: ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+                </ul>
+            </div>
+
+            <fieldset class="border p-4 rounded">
+                <legend class="w-auto px-2">Datos del trabajo</legend>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="${categoria}">Categoría: </label>
+                    <div class="col-sm-10">
+                        <select th:field="*{categoria}" th:value="${trabajo.categoria}" class="form-control" required>
+                            <option value="limpieza">Limpieza</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="atencion">Atención al cliente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="${descripcion}">Descripción: </label>
+                    <div class="col-sm-10">
+                        <textarea th:field="*{descripcion}" th:value="${trabajo.descripcion}" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="${prioridad}">Prioridad: </label>
+                    <div class="col-sm-10">
+                        <select th:field="*{prioridad}" th:value="${trabajo.prioridad}" class="form-control" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="${tiempo}">Tiempo: </label>
+                    <div class="col-sm-10">
+                        <input type="number" th:field="*{tiempo}" th:value="${trabajo.tiempo}" class="form-control" required /><label> horas</label>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="${trabajador}">Trabajador: </label>
+                    <div class="col-sm-10">
+                        <select th:field="*{trabajador}" th:value="${trabajo.trabajador}" class="form-control" required>
+                            <option th:each="trabajador : ${trabajadores}" th:value="${trabajador.idTrabajador}" th:text="${trabajador.nombre} + ' ' + ${trabajador.apellidos}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+            </fieldset>
+        </form>
+
+        <div class="text-center mt-3">
+            <a class="btn btn-info" th:href="@{/views/trabajos}">Volver</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

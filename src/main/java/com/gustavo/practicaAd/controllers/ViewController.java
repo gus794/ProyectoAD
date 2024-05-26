@@ -36,27 +36,13 @@ public class ViewController {
 
 	@GetMapping("")
 	public String index(Model model) {
-		model.addAttribute("title", "Spring Backend");
-		return "index";
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    model.addAttribute("trabajos", trabajos);
+	    model.addAttribute("trabajadores", trabajadores);
+
+	    return "crud";
 	}
-	
-	@GetMapping("/trabajadores/{idTrabajador}")
-    public String personalArea(@PathVariable Long idTrabajador, Model model) {
-        Trabajador trabajador = trabajadorService.findById(idTrabajador);
-        model.addAttribute("trabajador", trabajador);
-        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
-        model.addAttribute("trabajosPendientes", trabajoService.getPendingTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
-        return "personalArea";
-    }
-	
-	@GetMapping("/trabajadores/{idTrabajador}/finalizadas")
-    public String listarFinalizadasEnArea(@PathVariable Long idTrabajador, Model model) {
-        Trabajador trabajador = trabajadorService.findById(idTrabajador);
-        model.addAttribute("trabajador", trabajador);
-        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
-        model.addAttribute("trabajosFinalizadas", trabajoService.getFinishedTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
-        return "personalArea";
-    }
 	
 	@GetMapping("/trabajos/listar")
 	public String listar(Model model) {
@@ -64,21 +50,6 @@ public class ViewController {
 		model.addAttribute("trabajadores", trabajadorService.findAll());
 		return "listarTrabajos";
 	}
-	
-	@GetMapping("/trabajos/{id}/finish")
-    public String cerrarTarea(@PathVariable String id, @RequestParam("tiempo") Double tiempo, Model model) {
-        Trabajo trabajo = trabajoService.findById(id);
-        if (trabajo != null) {
-            trabajo.setTiempo(tiempo);
-            trabajo.setFechaFin(new Date());
-            trabajoService.save(trabajo);
-        }
-        Trabajador trabajador = trabajo.getTrabajador();
-        model.addAttribute("trabajador", trabajador);
-        model.addAttribute("title", "Área personal de " + trabajador.getNombre());
-        model.addAttribute("trabajosFinalizados", trabajoService.getFinishedTasks(trabajador.getIdTrabajador().toString(), trabajador.getContraseña()));
-        return "personalArea";
-    }
 	
 	@GetMapping("/trabajos")
     public String listarTrabajosYTrabajadores(Model model) {
@@ -172,7 +143,7 @@ public class ViewController {
 	@GetMapping("/editarTrabajo/{id}")
 	public String editTrabajo(@PathVariable String id, Model model) {
 	    Trabajo trabajo = trabajoService.findById(id);
-	    model.addAttribute("titulo","Añadir trabajo");
+	    model.addAttribute("titulo","Editar trabajo");
 		model.addAttribute("categoria","Categoria:");
 		model.addAttribute("descripcion","Descripcion:");
 		model.addAttribute("prioridad","Prioridad:");
@@ -305,7 +276,7 @@ public class ViewController {
 	}
 	
 	@PostMapping("/updateTrabajo")
-	public ModelAndView updateTrabajo(@Validated Trabajo trabajo, BindingResult result, Model mod) {
+	public String updateTrabajo(@Validated Trabajo trabajo, BindingResult result, Model mod) {
 	    ModelAndView model = new ModelAndView();
 
 	    model.addObject("trabajo", trabajo);
@@ -324,7 +295,6 @@ public class ViewController {
 
 	            trabajoService.save(existingTrabajo);
 	            
-	            model.setViewName("ready");
 	            mod.addAttribute("resultado", "Trabajo actualizado");
 	        }
 	    }
@@ -333,9 +303,11 @@ public class ViewController {
 		mod.addAttribute("descripcion","Descripcion:");
 		mod.addAttribute("prioridad","Prioridad:");
 		mod.addAttribute("tiempo","Tiempo:");
-		List<Trabajador> trabajadores = trabajadorService.findAll();
+	    List<Trabajo> trabajos = trabajoService.findAll();
+	    List<Trabajador> trabajadores = trabajadorService.findAll();
+	    mod.addAttribute("trabajos", trabajos);
 	    mod.addAttribute("trabajadores", trabajadores);
 
-	    return model;
+	    return "crud";
 	}
 }
